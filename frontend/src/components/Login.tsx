@@ -1,6 +1,6 @@
-import { createState } from "solid-js";
+import { createStore } from "solid-js/store";
 
-const [credentials, setCredential] = createState({
+const [credentials, setCredential] = createStore({
   email: "",
   password: "",
 });

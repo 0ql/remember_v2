@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"main/api"
 	"main/wsocket"
+	"time"
 
 	"github.com/antoniodipinto/ikisocket"
 	"github.com/gofiber/fiber/v2"
@@ -11,22 +13,49 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
+func printClients() {
+	for {
+		fmt.Println(wsocket.Clients)
+		time.Sleep(time.Second)
+	}
+}
+
 func main() {
+	go printClients()
+
 	app := fiber.New()
 	ws := app.Group("/ws")
 	Api := app.Group("/api")
 	v1 := Api.Group("/v1")
 
 	ws.Use("/", func(c *fiber.Ctx) error {
+		isValid, user := api.CheckIfValidSession(c, []string{"admin"})
+		if !isValid {
+			return fiber.ErrBadRequest
+		}
+
+		session_id := c.Cookies("session_id")
+		if _, ok := wsocket.Clients[session_id]; ok {
+			return fiber.ErrBadRequest
+		}
+
+		wsocket.Clients[session_id] = &wsocket.Client{
+			Status:   wsocket.Idle,
+			Username: user.Username,
+			Rank:     user.Rank,
+			Elo:      user.Elo,
+		}
+
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)
+
 			return c.Next()
 		}
 		return fiber.ErrUpgradeRequired
 	})
 
 	wsocket.EventHandlers()
-	ws.Get("/liveWaitingList", ikisocket.New(wsocket.WaitingUsers))
+	ws.Get("/liveWaitingList", ikisocket.New(wsocket.CreateClient))
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000",

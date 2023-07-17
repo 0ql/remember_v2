@@ -1,64 +1,74 @@
-import { Component, createContext, createState } from "solid-js";
+import { createContext } from "solid-js";
 import "./App.css";
-import NavConfig from "./NavConfig";
-import Login from "./pages/login";
-
-const [state, setState] = createState({
-  activeTab: 2,
-});
+import { A, Route, Router, Routes, useNavigate } from "@solidjs/router";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import Competitive from "./components/Competitive";
+import CreateQuiz from "./components/CreateQuiz";
+import QuestionList from "./components/QuestionList";
+import User from "./components/User";
+import Game from "./components/Game";
+import { GlobalContextProvider, createWebSocket } from "./socket";
 
 export const globalContext = createContext({ isLoggedIn: false });
 
 const getCookie = (name: string) => {
-  var dc, prefix, begin, end;
+	var dc, prefix, begin, end;
 
-  dc = document.cookie;
-  prefix = name + "=";
-  begin = dc.indexOf("; " + prefix);
-  end = dc.length;
+	dc = document.cookie;
+	prefix = name + "=";
+	begin = dc.indexOf("; " + prefix);
+	end = dc.length;
 
-  if (begin !== -1) {
-    begin += 2;
-  } else {
-    begin = dc.indexOf(prefix);
-    if (begin === -1 || begin !== 0) return null;
-  }
-  if (dc.indexOf(";", begin) !== -1) {
-    end = dc.indexOf(";", begin);
-  }
+	if (begin !== -1) {
+		begin += 2;
+	} else {
+		begin = dc.indexOf(prefix);
+		if (begin === -1 || begin !== 0) return null;
+	}
+	if (dc.indexOf(";", begin) !== -1) {
+		end = dc.indexOf(";", begin);
+	}
 
-  return decodeURI(dc.substring(begin + prefix.length, end)).replace(/\"/g, "");
+	return decodeURI(dc.substring(begin + prefix.length, end)).replace(/\"/g, "");
 };
 
-const Tabs: Component = () => {
-  let tabs = [];
-  for (let i = 0; i < NavConfig.length; i++) {
-    tabs.push(
-      <a
-        onClick={() => setState("activeTab", (val) => (val = i))}
-        class={state.activeTab === i ? "active" : ""}
-      >
-        {NavConfig[i].title}
-      </a>
-    );
-  }
-  return tabs;
-};
+const Component = () => {
+	const navigate = useNavigate()
+	createWebSocket(navigate)
+
+	return (
+		<Routes>
+			<Route path="/dashboard" component={Dashboard} />
+			<Route path="/competitive" component={Competitive} />
+			<Route path="/create" component={CreateQuiz} />
+			<Route path="/questions" component={QuestionList} />
+			<Route path="/user" component={User} />
+			<Route path="/game" component={Game} />
+		</Routes>
+	)
+}
 
 export default () => {
-  if (getCookie("session_id") === null) {
-    return <Login></Login>;
-  }
+	if (getCookie("session_id") === null) {
+		return <Login></Login>
+	}
 
-  return (
-    <>
-      <nav
-        class="tabs is-full"
-        style="background-color: var(--bg-color);position: sticky; top: 0;"
-      >
-        <Tabs />
-      </nav>
-      <main class="container">{NavConfig[state.activeTab].pageComponent}</main>
-    </>
-  );
+	return (
+		<GlobalContextProvider>
+			<Router>
+				<nav
+					class="tabs is-full"
+					style="background-color: var(--bg-color);position: sticky; top: 0;"
+				>
+					<A href="/dashboard">Dashboard</A>
+					<A href="/competitive">Competitive</A>
+					<A href="/create">Create</A>
+					<A href="/questions">Questions</A>
+					<A href="/user">User</A>
+				</nav>
+				<Component />
+			</Router>
+		</GlobalContextProvider>
+	);
 };

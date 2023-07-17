@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 
 	"main/database"
 
@@ -10,11 +9,11 @@ import (
 )
 
 type QuestionValidation struct {
-	Question string `validate:"required,min=3,max=32"`
-	Answer   string `validate:"required,min=3,max=32"`
-	Wrong0   string `validate:"required,min=3,max=32"`
-	Wrong1   string `validate:"required,min=3,max=32"`
-	Wrong2   string `validate:"required,min=3,max=32"`
+	Question string `validate:"required,min=1,max=500"`
+	Answer   string `validate:"required,min=1,max=500"`
+	Wrong0   string `validate:"required,min=1,max=500"`
+	Wrong1   string `validate:"required,min=1,max=500"`
+	Wrong2   string `validate:"required,min=1,max=500"`
 }
 
 func validateStruct(q interface{}) bool {
@@ -96,43 +95,6 @@ func DeleteQuestionById(c *fiber.Ctx) error {
 	var id string = c.Params("id")
 	var questions []database.Question
 	database.Db.Debug().Delete(&questions, &id)
-
-	return c.SendStatus(200)
-}
-
-type WaitingListValidation struct {
-	name string `validate:"required,min=3,max=32"`
-}
-
-type Folder struct {
-	Name         string `json:"name"`
-	FoldersIDs   []int  `json:"folders"`
-	QuestionsIDs []int  `json:"questions"`
-}
-
-func EnterWaitingList(c *fiber.Ctx) error {
-	isValid, _ := CheckIfValidSession(c, []string{"member", "admin"})
-	if !isValid {
-		return c.SendStatus(401)
-	}
-
-	c.Accepts("json", "text")
-
-	w := new(WaitingListValidation)
-	if err := c.BodyParser(w); err != nil {
-		fmt.Println(err)
-		return c.SendStatus(500)
-	}
-
-	if !validateStruct(w) {
-		return c.SendStatus(400)
-	}
-
-	// var question database.Question
-
-	// database.Db.Debug().Create(&Folder)
-
-	fmt.Println(w.name)
 
 	return c.SendStatus(200)
 }

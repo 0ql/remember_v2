@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@types/jest": "26.0.23",
-    "@types/node": "15.0.2",
-    "solid-js": "^0.26.5",
-    "solid-scripts": "0.0.55",
-    "typescript": "4.2.4"
+    "@types/jest": "29.5.3",
+    "@types/node": "20.4.2",
+    "solid-js": "^1.7.8",
+    "solid-scripts": "0.0.61",
+    "typescript": "5.1.6"
   },
-  "dependencies": {},
   "scripts": {
-    "start": "solid-scripts start",
+    "start": "solid-scripts --openssl-legacy-provider start",
     "build": "solid-scripts build",
     "test": "solid-scripts test"
   },
@@ -21,5 +20,8 @@
     "Safari 11",
     "Edge 17",
     "Node 10"
-  ]
+  ],
+  "dependencies": {
+    "@solidjs/router": "^0.8.2"
+  }
 }
