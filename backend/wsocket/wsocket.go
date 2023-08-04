@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"main/database"
+	"math"
 	"math/rand"
 	"time"
 
@@ -40,7 +41,7 @@ type Client struct {
 	Status   Status
 	Username string
 	Rank     string
-	Elo      int
+	Elo      float64
 }
 
 type QuestionOptions struct {
@@ -62,8 +63,8 @@ type Game struct {
 
 type ResultsData struct {
 	Answers    [5]int
-	PlayerAElo int
-	PlayerBElo int
+	PlayerAElo float64
+	PlayerBElo float64
 }
 
 type MessageCtoS struct {
@@ -170,8 +171,21 @@ func Matching(kws *ikisocket.Websocket) {
 	BroadcastClients(kws, false)
 }
 
-func EndGameSendResults(game *Game) {
+func EloFormula(a float64, b float64, resa float64, resb float64) (float64, float64) {
+	return a + resa - (1 / (1 + math.Pow(10, (b - a) / 400))), b + resb - (1 / (1 + math.Pow(10, (a - b) / 400)))
+}
+
+func EndGameSendResults(kws *ikisocket.Websocket, game *Game) {
 	fmt.Println("sending results")
+	var s, sb = 0.5, 0.5
+	if game.PlayerACorrect > game.PlayerBCorrect {
+		s = 1
+		sb = 0
+	} else if game.PlayerACorrect < game.PlayerBCorrect {
+		s = 0
+		sb = 1
+	}
+	Clients[game.PlayerASessionID].Elo, Clients[game.PlayerBSessionID].Elo = EloFormula(Clients[game.PlayerASessionID].Elo, Clients[game.PlayerBSessionID].Elo, s, sb)
 	jn, _ := json.Marshal(MessageStoC{
 		Event: Results,
 		Data: ResultsData{
@@ -182,6 +196,11 @@ func EndGameSendResults(game *Game) {
 	})
 	ikisocket.EmitTo(Clients[game.PlayerASessionID].SocketID, jn)
 	ikisocket.EmitTo(Clients[game.PlayerBSessionID].SocketID, jn)
+	game.PlayerACorrect = -1
+	game.PlayerBCorrect = -1
+	Clients[game.PlayerASessionID].Status = Idle
+	Clients[game.PlayerBSessionID].Status = Idle
+	BroadcastClients(kws, false)
 }
 
 func EventHandlers() {
@@ -228,13 +247,15 @@ func EventHandlers() {
 					fmt.Println("setting PlayerACorrect")
 					game.PlayerACorrect = correct
 					if game.PlayerBCorrect != -1 {
-						EndGameSendResults(game)
+						fmt.Println("sending resultsA...")
+						EndGameSendResults(e.Kws, game)
 					}
 				} else {
 					fmt.Println("setting PlayerBCorrect")
 					game.PlayerBCorrect = correct
 					if game.PlayerACorrect != -1 {
-						EndGameSendResults(game)
+						fmt.Println("sending resultsB...")
+						EndGameSendResults(e.Kws, game)
 					}
 				}
 				break

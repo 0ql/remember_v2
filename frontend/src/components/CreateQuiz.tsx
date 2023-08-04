@@ -23,52 +23,52 @@ const sendQuestion = () => {
 export default () => {
 	return (
 		<>
-			<h2>Frage Erstellen</h2>
+			<h2>Create Question</h2>
 			<hr></hr>
 			<fieldset>
-				<legend>FRAGE ERSTELLEN</legend>
+				<legend>CREATE QUESTION</legend>
 				<p>
-					<label>Frage</label>
+					<label>Question</label>
 					<input
 						type="text"
-						placeholder="Frage Eingeben"
+						placeholder="Enter Question"
 						onChange={(e: any) => setState("Question", e.target.value)}
 					></input>
 				</p>
 				<p>
-					<label>Antwort</label>
+					<label>Answer</label>
 					<input
 						type="text"
-						placeholder="Antwort Eingeben"
+						placeholder="Enter Answer"
 						onChange={(e: any) => setState("Answer", e.target.value)}
 					></input>
 				</p>
 				<p>
-					<label>1. Falsche Antwort</label>
+					<label>1. Wrong Answer</label>
 					<input
 						type="text"
-						placeholder="Falsche Antwort"
+						placeholder="Wrong Answer"
 						onChange={(e: any) => setState("Wrong0", e.target.value)}
 					></input>
 				</p>
 				<p>
-					<label>2. Falsche Antwort</label>
+					<label>2. Wrong Answer</label>
 					<input
 						type="text"
-						placeholder="Falsche Antwort"
+						placeholder="Wrong Answer"
 						onChange={(e: any) => setState("Wrong1", e.target.value)}
 					></input>
 				</p>
 				<p>
-					<label>3. Falsche Antwort</label>
+					<label>3. Wrong Answer</label>
 					<input
 						type="text"
-						placeholder="Falsche Antwort"
+						placeholder="Wrong Answer"
 						onChange={(e: any) => setState("Wrong2", e.target.value)}
 					></input>
 				</p>
 				<button onClick={sendQuestion} class="button primary">
-					Frage Erstellen
+					Create Question
 				</button>
 			</fieldset>
 		</>

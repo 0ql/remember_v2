@@ -41,8 +41,8 @@ const ListUsers = () => {
 				<thead>
 					<tr>
 						<th>Email</th>
-						<th>Benutzername</th>
-						<th>Rang</th>
+						<th>Username</th>
+						<th>Rank</th>
 						<th>Elo</th>
 					</tr>
 				</thead>
@@ -84,16 +84,16 @@ const CreateUser = () => {
 
 	return (
 		<>
-			<h4>Benutzer Erstellen</h4>
+			<h4>Create User</h4>
 			<hr />
 			<fieldset>
-				<legend>BENUTZER ERSTELLEN</legend>
+				<legend>CREATE USER</legend>
 				<p>
-					<label>Benutzername</label>
+					<label>Username</label>
 					<input
 						onChange={(e: any) => setNewUser("username", e.target.value)}
 						type="text"
-						placeholder="Benutzername"
+						placeholder="Username"
 					/>
 				</p>
 
@@ -106,15 +106,15 @@ const CreateUser = () => {
 					/>
 				</p>
 
-				<label>Elo Zahl</label>
+				<label>Elo</label>
 				<p class="grouped">
 					<input type="number" placeholder="Elo Zahl" value="100" />
 					<input
 						onChange={(e: any) => setNewUser("password", e.target.value)}
 						type="password"
-						placeholder="Passwort"
+						placeholder="Password"
 					></input>
-					<button onClick={createUser}>Erstellen</button>
+					<button onClick={createUser}>Create</button>
 				</p>
 			</fieldset>
 		</>
@@ -152,13 +152,13 @@ export default () => {
 
 	return (
 		<>
-			<h2>Mein Account</h2>
+			<h2>Account</h2>
 			<hr></hr>
-			<h4>Benutzername</h4>
+			<h4>Username</h4>
 			<div>{getInfo().username}</div>
-			<h4>Email Addresse</h4>
+			<h4>Email</h4>
 			<div>{getInfo().email}</div>
-			<h4>Rang</h4>
+			<h4>Rank</h4>
 			<div>{getInfo().rank}</div>
 			<h4>Elo Rating</h4>
 			<div>{getInfo().elo}</div>

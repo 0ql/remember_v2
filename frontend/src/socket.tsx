@@ -48,16 +48,30 @@ export type Game = {
 	TimeUp: number
 }
 
+export type Results = {
+	Answers: number[]
+	PlayerAElo: number
+	PlayerBElo: number
+}
+
 type GlobalContextType = {
 	clients: Client[],
 	userdata: Client | null,
 	game: Game | null
+	answers: number[]
+	results: Results
 }
 
 const [state, setState] = createStore<GlobalContextType>({
 	clients: [],
 	userdata: null,
-	game: null
+	game: null,
+	answers: [],
+	results: {
+		Answers: [],
+		PlayerAElo: 0,
+		PlayerBElo: 0
+	}
 })
 
 export const GlobalContext = createContext<[get: GlobalContextType, set: SetStoreFunction<GlobalContextType>]>([state, setState])
@@ -126,6 +140,12 @@ export const createWebSocket = (navigate: Navigator) => {
 				break
 			case EventsStoC.Results:
 				console.log("Results Receved:", msg.Data)
+				setState(state => {
+					return {
+						state,
+						results: msg.Data
+					}
+				})
 				break
 		}
 	};

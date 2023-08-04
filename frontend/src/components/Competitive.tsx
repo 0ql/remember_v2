@@ -6,18 +6,18 @@ const [state, setState] = useContext(GlobalContext)
 export default () => {
 	return (
 		<div>
-			<Switch fallback={<button class="button" onClick={leaveWaitingRoom}>Warteraum verlassen</button>}>
+			<Switch fallback={<button class="button" onClick={leaveWaitingRoom}>Enter Waitingroom</button>}>
 				<Match when={state.clients.filter(user => user.Username === state.userdata?.Username)[0]?.Status === Status.Idle}>
-					<button class="button" onClick={joinWaitingRoom}>In Warteraum eintreten</button>
+					<button class="button" onClick={joinWaitingRoom}>Exit Waitingroom</button>
 				</Match>
 			</Switch>
 			<table>
 				<thead>
 					<tr>
 						<th>Status</th>
-						<th>Benutzername</th>
-						<th>Rang</th>
-						<th>Elo Zahl</th>
+						<th>Username</th>
+						<th>Rank</th>
+						<th>Elo Rating</th>
 					</tr>
 				</thead>
 				<tbody>

@@ -26,13 +26,13 @@ type Question struct {
 
 type User struct {
 	gorm.Model
-	Email        string `json:"email"`
-	Username     string `json:"username"`
-	Pwdhash      string `json:"pwdhash"`
-	Sessiontoken string `json:"sessiontoken"`
-	Expires      int64  `json:"expires"`
-	Rank         string `json:"rank"`
-	Elo          int    `json:"elo"`
+	Email        string  `json:"email"`
+	Username     string  `json:"username"`
+	Pwdhash      string  `json:"pwdhash"`
+	Sessiontoken string  `json:"sessiontoken"`
+	Expires      int64   `json:"expires"`
+	Rank         string  `json:"rank"`
+	Elo          float64 `json:"elo"`
 }
 
 func init() {
